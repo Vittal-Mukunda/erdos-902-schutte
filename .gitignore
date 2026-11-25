@@ -1,0 +1,6 @@
+# LaTeX build files
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.toc
+__pycache__/

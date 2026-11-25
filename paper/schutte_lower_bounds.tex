@@ -1,0 +1,872 @@
+\documentclass[11pt]{amsart}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage[margin=1.1in]{geometry}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\D}{D}
+\newcommand{\Dp}{D^{+}}
+\newcommand{\Nin}{N^{-}}
+\newcommand{\Nout}{N^{+}}
+\newcommand{\din}{d^{-}}
+\newcommand{\dout}{d^{+}}
+\newcommand{\QR}{\mathrm{QR}}
+\newcommand{\cs}{c^{*}}
+\newcommand{\fb}{f_{\mathrm{bip}}}
+\newcommand{\abs}[1]{\lvert #1\rvert}
+
+\title[Lower bounds for Sch\"utte's tournament problem]{Improved lower bounds for Sch\"utte's tournament problem\\ (Erd\H{o}s Problem \#902)}
+
+% ---- Fill in before posting ----
+\author{Vittal Mukunda}
+\email{vittal.muku@gmail.com}
+
+\date{25 November 2026}
+
+\subjclass[2020]{05C20 (primary); 05C69, 05D05, 90C22}
+\keywords{tournaments, Sch\"utte's problem, property $S_k$, domination, doubly regular tournaments, flag algebras}
+
+\begin{document}
+
+\begin{abstract}
+A tournament has property $S_n$ if every set of $n$ vertices is beaten by a single vertex outside the set, and $f(n)$ is the least
+number of vertices of a tournament with $S_n$. Erd\H{o}s showed $f(n)\le(\ln 2+o(1))\,n^2 2^n$, and Szekeres and Szekeres showed
+$f(n)\ge (n+2)2^{n-1}-1$; the order of magnitude of $f(n)$ is open (Erd\H{o}s Problem \#902).
+We prove:
+(i) $f(4)\ge 52$, by hand; more precisely, every tournament on at most $51$ vertices contains three vertices with at most four common
+dominators;
+(ii) $f(n)\ge (n+\tfrac52)2^{n-1}-1$ for every $n\ge 4$;
+(iii) $\liminf_{n\to\infty} f(n)/(n2^n)\ge \cs=0.76950\ldots$, improving the constant $1/2$ of Szekeres and Szekeres;
+(iv) explicit bounds $f(5)\ge 121$, $f(6)\ge 281,\dots, f(12)\ge 35655$ from an exact recursion.
+We also show that the asymptotic bound (iii) already holds for the bipartite analogue of the problem, where no arcs inside either
+side are available, by a game-value form of the Szekeres doubling step. Finally we record computer-assisted partial results towards
+$f(4)\ge 53$, obtained from finite-$N$ flag-algebra certificates checked in exact rational arithmetic. The order of magnitude of $f(n)$
+remains open: the bounds of this paper are still a factor of order $n$ apart from Erd\H{o}s's upper bound.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+A \emph{tournament} $T$ on a finite vertex set $V$ has exactly one arc between any two distinct vertices; we write $u\to v$ when $u$
+beats $v$. For $X\subseteq V$ the set of \emph{dominators} of $X$ is
+\[
+  \D(X)=\{w\in V\setminus X:\ w\to x\text{ for all }x\in X\}.
+\]
+The tournament has \emph{property $S_n$} if $\D(X)\neq\emptyset$ for every $n$-subset $X$ of $V$, and $f(n)$ denotes the least
+number of vertices of a tournament with property $S_n$. Sch\"utte asked whether $S_n$ tournaments exist for every $n$.
+Erd\H{o}s~\cite{Erdos63} answered this with a random tournament and proved
+\[
+  f(n)\le (\ln 2+o(1))\,n^2 2^n .
+\]
+Szekeres and Szekeres~\cite{SS65} proved $f(1)=3$, $f(2)=7$, $f(3)=19$ and
+\begin{equation}\label{eq:SS}
+  f(n)\ge (n+2)\,2^{n-1}-1 .
+\end{equation}
+Graham and Spencer~\cite{GS71} showed that the Paley tournament $\QR_p$ has $S_n$ when $p>n^2 4^n$. It is known that $\QR_{67}$
+has $S_4$ and $\QR_{331}$ has $S_5$ (both can be checked by direct computation), so $f(4)\le 67$ and $f(5)\le 331$. Further work on the problem and its variants
+includes~\cite{RMHH04,BGHT03,Tys00,Jef26}. Erd\H{o}s Problem \#902~\cite{EP902} asks for an estimate of $f(n)$; the two classical
+bounds differ by a factor of order $n$, and deciding the order of magnitude of $f(n)$ is the open question.
+
+\subsection{Results}
+
+The first result settles the next small case beyond the classical one, by hand.
+
+\begin{theorem}\label{thm:f4}
+Every tournament on at most $51$ vertices has three vertices with at most four common dominators. Consequently $f(4)\ge 52$.
+\end{theorem}
+
+The second statement follows from the first because, in an $S_4$ tournament, every triple has at least five dominators
+(Lemma~\ref{lem:szekeres}). The first statement fails on $59$ vertices: in the Paley tournament $\QR_{59}$ every triple has at
+least five dominators (checked by direct computation). So the least order $g(5)$ of a tournament in which every triple has at least
+five dominators satisfies $52\le g(5)\le59$.
+
+For general $n$ we improve~\eqref{eq:SS} for every $n\ge 4$, and improve its leading constant.
+
+\begin{theorem}\label{thm:B}
+For every $n\ge 4$, $f(n)\ge (n+\tfrac52)\,2^{n-1}-1$.
+\end{theorem}
+
+\begin{theorem}\label{thm:C}
+$\displaystyle \liminf_{n\to\infty}\frac{f(n)}{n2^n}\ge \cs$, where $\cs=0.76950\,32191\,50489\ldots$ is the constant defined in
+Section~\ref{sec:asym}.
+\end{theorem}
+
+The bound~\eqref{eq:SS} has leading term $\tfrac12 n2^n$. Theorem~\ref{thm:C} raises the constant from $1/2$ to $0.7695$; the
+order $n2^n$ is unchanged.
+
+\begin{theorem}\label{thm:D}
+$f(5)\ge 121$, $f(6)\ge 281$, $f(7)\ge 665$, $f(8)\ge 1485$, $f(9)\ge 3388$, $f(10)\ge 7398$, $f(11)\ge 16569$ and
+$f(12)\ge 35655$.
+\end{theorem}
+
+Theorem~\ref{thm:D} is obtained from an explicit integer recursion (Section~\ref{sec:table}); the computation is exact and
+takes less than a second.
+
+\smallskip
+\noindent\textbf{The bipartite problem.}
+A \emph{bipartite tournament} $(A,B)$ has one arc between every $a\in A$ and $b\in B$ and no other arcs. It has property
+$S_{n,n}$ if every $n$-subset of $A$ has a dominator in $B$ and every $n$-subset of $B$ has a dominator in $A$. Let $\fb(n)$ be the
+least value of $\abs{A}+\abs{B}$. An $S_n$ tournament on $N$ vertices yields an $S_{n,n}$ bipartite tournament on $2N$ vertices
+(two copies of $V$, with the arc between the two copies of a vertex oriented arbitrarily), so $\fb(n)\le 2f(n)$. Bipartite versions of Sch\"utte's problem were studied in~\cite{BGHT03}.
+
+\begin{theorem}\label{thm:bip}
+For every $n\ge 1$, $\fb(n)\ge (n+1)\,2^n$, with equality for $n=1$. Moreover $\fb(n)\ge 2(\cs-o(1))\,n2^n$.
+\end{theorem}
+
+Since $f(n)\ge\fb(n)/2$, Theorem~\ref{thm:bip} contains Theorem~\ref{thm:C}. The proof replaces the Szekeres doubling step,
+which uses arcs inside a dominator set, by an inequality involving the value of a two-person zero-sum game
+(Lemma~\ref{lem:game}). So the known asymptotic lower bound for $f(n)$ does not use any arc between two vertices of the same
+dominator set.
+
+\smallskip
+\noindent\textbf{Towards $f(4)\ge 53$.}
+Call a pair of vertices of an $S_4$ tournament \emph{tight} if it has exactly $11$ dominators, the least possible
+(Lemma~\ref{lem:level}). In Section~\ref{sec:52} we prove the following with computer assistance.
+
+\begin{theorem}[computer-assisted]\label{thm:52}
+Let $T$ be an $S_4$ tournament on $52$ vertices. If $T$ has no tight pair, then some vertex of $T$ has in-degree at least $30$.
+Moreover, no tournament on $52$ vertices in which every in-degree is $25$ or $26$, every pair has at least $12$ dominators and
+every triple has at least $5$ dominators exists.
+\end{theorem}
+
+The proof combines short hand arguments with four certificates for a finite-$N$ flag-algebra relaxation at the level of
+$7$-vertex subtournaments. Each certificate is a list of nonnegative rational multipliers; their validity is checked in exact
+rational arithmetic. The case of an $S_4$ tournament on $52$ vertices with a tight pair, and the case without a tight pair
+and with a vertex of in-degree at least $30$, remain open.
+
+\subsection{Method}
+
+All lower bounds above rest on one fact (Lemma~\ref{lem:szekeres}, due to Szekeres and Szekeres): if $T$ has $S_n$ and
+$\abs{A}\le n-1$, then $\D(A)$ is not dominated, so it has more than $n$ vertices. Applied to $A\cup\{y\}$ it shows that
+$T[\D(A)]$ has large minimum in-degree, which gives the doubling $\abs{\D(A)}\ge 2\nu_{\abs A+1}+1$. Our improvements come from
+double counting the pairs $(U,y)$ with $U$ a $k$-subset of $\D(A)$ and $y\in\D(U)$ (the \emph{cross-level lemma},
+Lemma~\ref{lem:cross}), which uses the lower bound $\nu_k$ for the number of dominators of a $k$-set at a level $k$ different
+from $\abs{A}+1$. Iterating this across levels with a careful integral estimate gives the constant $\cs$.
+
+For $n=4$ the argument is finer. At $51$ vertices we show that an $S_4$ tournament would have to be a doubly regular tournament,
+using a congruence modulo $4$ (Section~\ref{sec:J3}) and a spectral argument, and we exclude doubly regular tournaments on $51$
+vertices with an identity between the third moments of the number of dominators of a triple and the number of vertices the
+triple dominates (Section~\ref{sec:drt}).
+
+In Section~\ref{sec:limits} we explain why a bound of the form $f(n)/(n2^n)\to\infty$ needs more: if antisymmetry is dropped and
+only the covering of $n$-sets by out-neighbourhoods is kept, the factor $n$ disappears entirely.
+
+\subsection{Use of computers}
+Theorems~\ref{thm:f4}, \ref{thm:B}, \ref{thm:C} and~\ref{thm:bip} are proved by hand. The numerical value of $\cs$ and the table
+of Theorem~\ref{thm:D} are computed exactly from the definitions given here. Theorem~\ref{thm:52} relies on machine-generated
+certificates that are checked in exact arithmetic. The statements that $\QR_{47}$, $\QR_{59}$, $\QR_{67}$ and $\QR_{331}$ have the
+properties claimed are checked by direct computation. Scripts and certificates are listed in Section~\ref{sec:data}.
+
+\section{Preliminaries}\label{sec:prelim}
+
+Throughout, $T$ is a tournament on $V$ with $\abs{V}=N$. We write $\Nout(v)$, $\Nin(v)$ for the out- and in-neighbourhood of $v$, and
+$\dout(v)$, $\din(v)$ for their sizes; $T[Y]$ is the subtournament induced on $Y$. Note $\D(\emptyset)=V$ and $\D(\{v\})=\Nin(v)$.
+For $0\le s\le N$ let
+\[
+  \nu_s=\nu_s(T)=\min\{\abs{\D(X)}:\ X\subseteq V,\ \abs{X}=s\}.
+\]
+Binomial coefficients $\binom{x}{k}$ are $0$ when $x<k$.
+
+\begin{lemma}\label{lem:hered}
+If $T$ has $S_n$, then every set of at most $n$ vertices has a dominator. If $X\subseteq X'$ then $\D(X')\subseteq \D(X)$; hence
+$\nu_0\ge\nu_1\ge\cdots\ge\nu_n\ge 1$.
+\end{lemma}
+
+\begin{proof}
+$S_n$ forces $N\ge n+1$. Extend $X$ with $\abs{X}\le n$ to an $n$-set $X'$; a dominator of $X'$ lies outside $X$ and beats $X$.
+The inclusion is immediate.
+\end{proof}
+
+\begin{lemma}[Szekeres--Szekeres~\cite{SS65}]\label{lem:szekeres}
+Let $T$ have $S_n$ and $\abs{A}\le n-1$. Then no vertex beats every vertex of $\D(A)$. Consequently $\abs{\D(A)}\ge n+1$, that is,
+$\nu_{n-1}\ge n+1$.
+\end{lemma}
+
+\begin{proof}
+$\D(A)\neq\emptyset$ by Lemma~\ref{lem:hered}. Suppose $z$ beats every vertex of $\D(A)$. Then $z\notin A$ (vertices of $\D(A)$ beat
+$A$) and $z\notin\D(A)$. So $A\cup\{z\}$ has at most $n$ vertices and has a dominator $w$. Then $w\notin A$ and $w$ beats $A$, so
+$w\in\D(A)$, hence $z\to w$, contradicting $w\to z$. If $\abs{\D(A)}\le n$, extending $\D(A)$ to an $n$-set and taking a dominator
+would give such a $z$.
+\end{proof}
+
+\begin{lemma}\label{lem:level}
+Let $T$ have $S_n$, let $A$ be an $s$-set with $s\le n-1$, and $R=\D(A)$. For every $y\notin A$,
+\begin{equation}\label{eq:level}
+  \D(A\cup\{y\})=R\cap \Nin(y).
+\end{equation}
+In particular $T[R]$ has minimum in-degree at least $\nu_{s+1}$, every $y\notin A\cup R$ is beaten by at least $\nu_{s+1}$ vertices of
+$R$, and $\abs{R}\ge 2\nu_{s+1}+1$. A tournament with minimum in-degree $\delta$ has at least $2\delta+1$ vertices, with equality
+only if it is regular of degree $\delta$.
+\end{lemma}
+
+\begin{proof}
+$w\in\D(A\cup\{y\})$ iff $w\notin A\cup\{y\}$, $w$ beats $A$ and $w$ beats $y$, i.e.\ $w\in R\cap\Nin(y)$. The set has at least
+$\nu_{s+1}$ elements since $\abs{A\cup\{y\}}\le n$. For the last claim, a tournament on $m$ vertices with all in-degrees at least
+$\delta$ has $\binom m2\ge m\delta$, with equality iff every in-degree equals $\delta$.
+\end{proof}
+
+Iterating Lemma~\ref{lem:level} gives $\nu_s+1\ge 2(\nu_{s+1}+1)$ and hence
+\begin{equation}\label{eq:doubling}
+  N+1=\nu_0+1\ \ge\ 2^{\,n-j}\,(\nu_{n-j}+1)\qquad (0\le j\le n).
+\end{equation}
+With $j=1$ and Lemma~\ref{lem:szekeres} this is~\eqref{eq:SS}.
+
+\section{\texorpdfstring{The cross-level lemma and Theorem~\ref{thm:B}}{The cross-level lemma and Theorem 1.2}}\label{sec:B}
+
+\begin{lemma}[cross-level lemma]\label{lem:cross}
+Let $T$ have $S_n$, let $A$ be an $s$-set with $0\le s\le n-1$, $R=\D(A)$, $m=\abs{R}$, and $h\le\nu_{s+1}$. Then for every
+$1\le k\le n$,
+\[
+  \nu_k\binom{m}{k}\ \le\ \sum_{y\notin A}\binom{\abs{\Nout(y)\cap R}}{k}\ \le\ (N-s-m)\binom{m-h}{k}+m\binom{m-h-1}{k}\
+  \le\ (N-s)\binom{m-h}{k}.
+\]
+\end{lemma}
+
+\begin{proof}
+Count pairs $(U,y)$ with $U$ a $k$-subset of $R$ and $y\in\D(U)$. Each $U$ has at least $\nu_k$ dominators. A vertex $y$
+dominates $U$ iff $U\subseteq\Nout(y)\cap R$, so the count equals the middle sum; for $y\in A$ the term is $0$ since $R$ beats $A$.
+For $y\notin A$, \eqref{eq:level} gives $\Nout(y)\cap R=R\setminus(\{y\}\cup\D(A\cup\{y\}))$, which has at most $m-h-1$ elements
+if $y\in R$ and at most $m-h$ otherwise. There are $m$ vertices in $R$ and $N-s-m$ outside $A\cup R$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:B}]
+For $n=4$ the bound is $51$, and Theorem~\ref{thm:f4} gives more. Let $n\ge 5$ and let $T$ have $S_n$ on $N$ vertices. By
+Lemmas~\ref{lem:szekeres} and~\ref{lem:level}, $\nu_{n-1}\ge n+1$ and $\nu_{n-2}\ge 2n+3$. Put $P(n)=(2n+5)2^{n-2}$, so that the
+claim is $N\ge P(n)-1$.
+
+\emph{Case 1: some $(n-2)$-set $A$ has $\abs{\D(A)}=2n+3$.} Lemma~\ref{lem:cross} with $s=n-2$, $m=2n+3$, $h=n+1$, $k=n-1$ gives
+$(n+1)\binom{2n+3}{n-1}\le (N-n+2)\binom{n+2}{3}$. Put $\Lambda(n)=(n+1)\binom{2n+3}{n-1}/\binom{n+2}{3}$. We claim $\Lambda(n)>P(n)$ for
+$n\ge 5$. Indeed $\Lambda(5)=6\cdot 715/35=858/7>120=P(5)$, and
+\[
+  \frac{\Lambda(n+1)}{\Lambda(n)}=\frac{2(n+2)^2(2n+5)}{(n+1)(n+3)(n+5)}\ \ge\ 3 \quad(n\ge 5),
+\]
+because $2(n+2)^2(2n+5)-3(n+1)(n+3)(n+5)=n^3-n^2-13n-5$, which equals $30$ at $n=5$ and is increasing for $n\ge 3$. Since
+$P(n+1)/P(n)=2(2n+7)/(2n+5)<3$, induction gives $\Lambda(n)>P(n)$. Hence $N\ge\Lambda(n)+n-2>P(n)$.
+
+\emph{Case 2: every $(n-2)$-set has at least $2n+4$ dominators.} Then~\eqref{eq:doubling} with $j=2$ gives
+$N+1\ge 2^{n-2}(2n+5)$.
+\end{proof}
+
+\begin{remark}
+At $n=4$ Case 1 fails ($\Lambda(4)=41.25<52$), so $n=4$ needs the structural argument of Sections~\ref{sec:51}--\ref{sec:drt}. At
+$n=3$ the formula would give $21>f(3)=19$; indeed in $\QR_{19}$ every vertex has exactly $9=2\cdot3+3$ dominators.
+\end{remark}
+
+\section{The asymptotic constant}\label{sec:asym}
+
+For $x\ge 1$ let $F(x)=x\ln x-(x-1)\ln(x-1)$, with $F(1)=0$. For $b\ge 0$ and $a-b\ge 1$ put
+\[
+  \Phi(a,b)=\int_0^1\ln\frac{a-y}{a-b-y}\,dy=F(a)-F(a-b),
+\]
+using $\int_0^1\ln(c-y)\,dy=F(c)-1$ for $c\ge 1$.
+
+\begin{lemma}\label{lem:Phi}
+$F$ is continuous on $[1,\infty)$ and $F'(x)=\ln\frac{x}{x-1}$ is positive and strictly decreasing on $(1,\infty)$. Hence $\Phi$ is
+continuous, strictly decreasing in $a$ and strictly increasing in $b$. For $b\ge1$: (i) $\Phi(b+1,b)=F(b+1)\ge F(2)=2\ln 2$;
+(ii) $\Phi(2b,b)>\ln 2>\Phi(2b+1,b)$; (iii) $\Phi(a,b)\to0$ as $a\to\infty$.
+\end{lemma}
+
+\begin{proof}
+$\partial_a\Phi=F'(a)-F'(a-b)<0$ and $\partial_b\Phi=F'(a-b)>0$. For (ii),
+$\Phi(2b,b)=\int_b^{2b}-\ln(1-1/x)\,dx>\int_b^{2b}dx/x=\ln2$ and
+$\Phi(2b+1,b)=\int_{b+1}^{2b+1}\ln\bigl(1+\tfrac{1}{x-1}\bigr)dx<\int_{b+1}^{2b+1}\tfrac{dx}{x-1}=\ln 2$.
+For (iii), $\Phi(a,b)=\int_{a-b}^aF'\le bF'(a-b)\to0$.
+\end{proof}
+
+\begin{definition}
+Let $a_1=1$ and, for $j\ge2$, let $a_j$ be the unique $a\ge a_{j-1}+1$ with $\Phi(a,a_{j-1})=\ln 2$. By Lemma~\ref{lem:Phi},
+$2a_{j-1}<a_j<2a_{j-1}+1$, so $a_j/2^j$ is strictly increasing and bounded by $1$. Put
+\[
+  \cs=\lim_{j\to\infty}\frac{a_j}{2^j}=\sup_j\frac{a_j}{2^j}=0.76950\,32191\,50489\,43269\,90652\ldots
+\]
+\end{definition}
+
+The first values are $a_2=2.5622$, $a_3=5.6487$, $a_4=11.8085$, $a_5=24.1224$, $a_6=48.7474$.
+
+\begin{lemma}[chain lemma]\label{lem:chain}
+Let $n\ge2$ and $1\le M\le n^22^n$. Let $\mu_{n-1}\le\mu_{n-2}\le\dots\le\mu_0$ be integers with $\mu_{n-1}\ge n+1$ and
+\begin{equation}\label{eq:chainhyp}
+  \binom{\mu_{n-i}}{n}\le M\binom{\mu_{n-i}-\mu_{n-i+1}}{n}\qquad(2\le i\le n).
+\end{equation}
+Then $\mu_{n-i}-\mu_{n-i+1}\ge n$ and $\Phi\bigl((\mu_{n-i}+1)/n,\ \mu_{n-i+1}/n\bigr)\le\ln2+2(\ln n)/n$ for $2\le i\le n$. Moreover, for
+every fixed $i\ge1$ and $\varepsilon>0$ there is $n_0$ such that $\mu_{n-i}\ge(a_i-\varepsilon)n$ whenever $n\ge n_0$.
+\end{lemma}
+
+\begin{proof}
+Write $m=\mu_{n-i}$, $h=\mu_{n-i+1}$. Since $m\ge n+1$, the left side of~\eqref{eq:chainhyp} is positive, so $m-h\ge n$. Let
+$g(x)=\ln\frac{m-x}{m-h-x}$. Then
+\[
+  G:=\sum_{t=0}^{n-1}g(t)=\ln\frac{\binom mn}{\binom{m-h}n}\le\ln M\le n\ln2+2\ln n.
+\]
+On $[-1,n-1]$, $m-h-x\ge1$ and $g'(x)=\frac1{m-h-x}-\frac1{m-x}>0$, so $g(t)\ge\int_{t-1}^tg$, and
+$G\ge\int_{-1}^{n-1}g(x)\,dx=n\int_0^1g(ny-1)\,dy=n\,\Phi\bigl(\tfrac{m+1}n,\tfrac hn\bigr)$. This proves the first two claims.
+
+For the last claim we use induction on $i$; $i=1$ holds as $\mu_{n-1}\ge n+1>a_1n$. Let $i\ge2$ and assume, as we may,
+$\varepsilon<a_i-a_{i-1}-1$. Put $a'=a_i-\varepsilon/2$, so $\Phi(a',a_{i-1})>\ln2$; by continuity choose $0<\delta<\varepsilon/2$ with
+$\eta:=\Phi(a',a_{i-1}-\delta)-\ln2>0$. By induction $h=\mu_{n-i+1}\ge(a_{i-1}-\delta)n$ for large $n$. Suppose
+$m=\mu_{n-i}<(a_i-\varepsilon)n$ with $n\ge2/\varepsilon$. Then $(m+1)/n<a'$ and $a'-h/n>(m+1-h)/n\ge1$, so by monotonicity
+$\Phi(\frac{m+1}n,\frac hn)\ge\Phi(a',\frac hn)\ge\Phi(a',a_{i-1}-\delta)=\ln2+\eta$, contradicting the first part once
+$2(\ln n)/n<\eta$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:C}]
+Fix $j\ge1$ and $\varepsilon>0$, let $n$ be large and let $T$ have $S_n$ on $N=f(n)$ vertices. If $N\ge n2^n$ there is nothing to
+prove. Otherwise put $\mu_s=\nu_s(T)$ and $M=N$. Lemma~\ref{lem:szekeres} gives $\mu_{n-1}\ge n+1$, and Lemma~\ref{lem:cross} with
+$s=n-i$, an $s$-set $A$ attaining $\nu_s$, $h=\nu_{s+1}$ and $k=n$ (using $\nu_n\ge1$) gives~\eqref{eq:chainhyp}. By
+Lemma~\ref{lem:chain}, $\nu_{n-j}\ge(a_j-\varepsilon)n$, and by~\eqref{eq:doubling}, $N+1\ge2^{n-j}(a_j-\varepsilon)n$. So
+$\liminf f(n)/(n2^n)\ge(a_j-\varepsilon)/2^j$; let $\varepsilon\to0$ and $j\to\infty$.
+\end{proof}
+
+\begin{remark}
+Each level gains about $n/2$ over plain doubling, since $a_j-2a_{j-1}$ decreases to $1/2$; this is the source of the improvement
+from $1/2$ to $\cs$. Convergence in $n$ is slow because of the $(\ln n)/n$ error term.
+\end{remark}
+
+\subsection{\texorpdfstring{Explicit bounds for $5\le n\le12$}{Explicit bounds for 5 <= n <= 12}}\label{sec:table}
+
+Fix $n$ and $N$ and define integers $L_n\ge\dots$ downwards. Put $L_n=1$. For $s=n-1,\dots,0$ let $L_s$ be the least integer
+$m\ge2L_{s+1}+1$ such that, for every $1\le k\le\min(m,n)$,
+\[
+  (N-s-m)\binom{m-L_{s+1}}{k}+m\binom{m-L_{s+1}-1}{k}\ \ge\ \lambda_k\binom mk,
+\]
+where $\lambda_k=L_k$ for $k>s$ and $\lambda_k=2^{s+1-k}(L_{s+1}+1)-1$ for $k\le s$; put $L_s=\infty$ if no $m\le N-s$ qualifies.
+
+\begin{lemma}\label{lem:rec}
+If an $S_n$ tournament on $N$ vertices exists, then $\nu_s\ge L_s$ for every $s$; in particular $L_0\le N$.
+\end{lemma}
+
+\begin{proof}
+Downward induction on $s$. Let $A$ be an $s$-set with $m=\abs{\D(A)}=\nu_s$. Lemma~\ref{lem:level} gives
+$m\ge2\nu_{s+1}+1\ge2L_{s+1}+1$. Each $\lambda_k$ is a lower bound for $\nu_k$: for $k>s$ by induction, for $k\le s$ by iterating
+$\nu_t+1\ge2(\nu_{t+1}+1)$ from $t=k$ to $s$. Lemma~\ref{lem:cross} with $h=L_{s+1}$ then shows that $m$ satisfies every displayed
+inequality.
+\end{proof}
+
+Lowering $N$ or raising any $L_t$ with $t>s$ only tightens the constraints, so $L_0(N)$ is non-increasing in $N$; if the recursion
+rules out $N$ it rules out every smaller $N$. Running it in exact integer arithmetic gives Table~\ref{tab:D}, which proves
+Theorem~\ref{thm:D}.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrrrrrrrrrrr}
+\toprule
+$n$ & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12\\
+\midrule
+$(n+2)2^{n-1}-1$ & 7 & 19 & 47 & 111 & 255 & 575 & 1279 & 2815 & 6143 & 13311 & 28671\\
+Theorem~\ref{thm:B} & -- & -- & 51 & 119 & 271 & 607 & 1343 & 2943 & 6399 & 13823 & 29695\\
+recursion & 7 & 19 & 49 & \textbf{121} & \textbf{281} & \textbf{665} & \textbf{1485} & \textbf{3388} & \textbf{7398} & \textbf{16569} & \textbf{35655}\\
+\bottomrule
+\end{tabular}
+\medskip
+\caption{Lower bounds for $f(n)$. The last row is the least $N$ not ruled out by the recursion of Lemma~\ref{lem:rec}; every
+smaller $N$ is ruled out. For $n=2,3$ it returns the true values; for $n=4$ Theorem~\ref{thm:f4} is stronger.}
+\label{tab:D}
+\end{table}
+
+\section{The bipartite problem}\label{sec:bip}
+
+Let $(A,B)$ be a bipartite tournament with $\abs A=K$ and $\abs B=m$. For $Y\subseteq A$ let
+$\D_B(Y)=\{b\in B: b\to y\text{ for all }y\in Y\}$ and $\nu^A_s=\min_{\abs Y=s}\abs{\D_B(Y)}$; define $\D_A(Z)$ and $\nu^B_s$ for
+$Z\subseteq B$ in the same way. Thus $\nu^A_0=m$ and $\nu^B_0=K$. Consider the zero-sum game in which $B$ chooses $b$, $A$ chooses $a$,
+and $B$ receives $1$ if $b\to a$ and $0$ otherwise. Let $v\in[0,1]$ be its value. By the minimax theorem there are probability
+measures $Q_A$ on $A$ and $Q_B$ on $B$ with
+\begin{equation}\label{eq:opt}
+  Q_A(\{a:b\to a\})\le v\ \ \text{for all }b\in B,\qquad Q_B(\{b:a\to b\})\le 1-v\ \ \text{for all }a\in A.
+\end{equation}
+
+\begin{lemma}[doubling via the game value]\label{lem:game}
+For $0\le s<K$, $\nu^A_{s+1}\le v\,\nu^A_s$. For $0\le s<m$, $\nu^B_{s+1}\le(1-v)\,\nu^B_s$.
+\end{lemma}
+
+\begin{proof}
+Let $Y\subseteq A$ attain $\nu^A_s$, put $R=\D_B(Y)$ and $q=Q_A(Y)$. By~\eqref{eq:opt},
+\[
+  v\abs R\ \ge\ \sum_{b\in R}Q_A(\{a:b\to a\})=\sum_{a\in A}Q_A(a)\,\abs{R\cap\Nin(a)}\ \ge\ q\abs R+(1-q)\,\nu^A_{s+1},
+\]
+because for $a\in Y$ every $b\in R$ beats $a$, and for $a\notin Y$, $R\cap\Nin(a)=\D_B(Y\cup\{a\})$. If $q<1$ this gives
+$\nu^A_{s+1}\le\frac{v-q}{1-q}\nu^A_s\le v\,\nu^A_s$. If $q=1$ then $v\ge1$ or $\abs R=0$, and in both cases the claim follows
+from $\nu^A_{s+1}\le\nu^A_s$. The statement for $B$ follows in the same way from the second half of~\eqref{eq:opt}.
+\end{proof}
+
+Multiplying the two inequalities gives $\nu^A_{s+1}\nu^B_{s+1}\le\frac14\nu^A_s\nu^B_s$, a halving ``on average over the two
+sides''. In a tournament the corresponding halving $\nu_{s+1}\le(\nu_s-1)/2$ comes from the arcs inside $\D(A)$
+(Lemma~\ref{lem:level}); Lemma~\ref{lem:game} uses no arc inside $A$ or inside $B$.
+
+\begin{proof}[Proof of Theorem~\ref{thm:bip}]
+Let $(A,B)$ have $S_{n,n}$. Every set of at most $n$ vertices of one side has a dominator on the other side (extend it to an
+$n$-set). For $Y\subseteq A$ with $\abs Y\le n-1$ the set $\D_B(Y)$ is not dominated: if $a^*\in A$ beat every vertex of
+$\D_B(Y)\neq\emptyset$, then $a^*\notin Y$, and a dominator $b$ of $Y\cup\{a^*\}$ would lie in $\D_B(Y)$ and beat $a^*$.
+Hence $\abs{\D_B(Y)}\ge n+1$, and by symmetry $\nu^A_{n-1},\nu^B_{n-1}\ge n+1$. By Lemma~\ref{lem:game},
+\[
+  (n+1)^2\le\nu^A_{n-1}\nu^B_{n-1}\le\bigl(v(1-v)\bigr)^{n-1}Km\le4^{-(n-1)}Km,
+\]
+so $K+m\ge2\sqrt{Km}\ge(n+1)2^n$. For $n=1$, the bipartite tournament $a_1\to b_1\to a_2\to b_2\to a_1$ has $S_{1,1}$ on $4$
+vertices.
+
+For the asymptotic bound, fix $i\ge1$ and $\varepsilon>0$. If $K+m>n^22^n$ there is nothing to prove, so let $K,m\le n^22^n$. Let
+$2\le i'\le n$, let $Y\subseteq A$ with $\abs Y=n-i'$ attain $\nu^A_{n-i'}$, $R=\D_B(Y)$ and $h=\nu^A_{n-i'+1}$. Every $n$-subset $U$
+of $R$ has a dominator $a\in A$; $a\notin Y$ since $R$ beats $Y$; and $U\subseteq R\cap\Nout(a)=R\setminus\D_B(Y\cup\{a\})$, a set of
+at most $\abs R-h$ elements. Hence $\binom{\abs R}{n}\le K\binom{\abs R-h}{n}$. Since $\nu^A$ is non-increasing, Lemma~\ref{lem:chain}
+applies with $\mu_s=\nu^A_s$ and $M=K$, giving $\nu^A_{n-i}\ge(a_i-\varepsilon)n$ for large $n$, and likewise
+$\nu^B_{n-i}\ge(a_i-\varepsilon)n$. Lemma~\ref{lem:game} over the remaining $n-i$ levels gives
+$(a_i-\varepsilon)^2n^2\le4^{-(n-i)}Km$, so $K+m\ge2\sqrt{Km}\ge2\,\frac{a_i-\varepsilon}{2^i}\,n2^n$. Let $\varepsilon\to0$ and
+$i\to\infty$.
+\end{proof}
+
+\begin{remark}\label{rem:fb2}
+Let $A=\{a_1,\dots,a_6\}$, $B=\{b_1,\dots,b_6\}$, and let $b_j\to a_i$ exactly when the $j$-th entry of the $i$-th word in
+\[
+  111000,\ 110100,\ 100011,\ 010011,\ 001110,\ 001101
+\]
+is $1$ (otherwise $a_i\to b_j$). Any two rows share a column of $1$s and any two columns share a row of $0$s, so this bipartite
+tournament has $S_{2,2}$ (found by computer; easily checked by hand). Hence $\fb(2)=12=(2+1)2^2$ as well.
+\end{remark}
+
+\section{\texorpdfstring{$f(4)\ge 51$}{f(4) >= 51}}\label{sec:51}
+
+Let $T$ have $S_4$ on $N$ vertices. Lemmas~\ref{lem:szekeres} and~\ref{lem:level} give:
+\begin{enumerate}[label=(F\arabic*)]
+\item every triple $Y$ has $\abs{\D(Y)}\ge5$;
+\item for every pair $P$, $T[\D(P)]$ has minimum in-degree at least $5$, so $\abs{\D(P)}\ge11$; every $y\notin P\cup\D(P)$ is beaten
+by at least $5$ vertices of $\D(P)$;
+\item for every $v$, $T[\Nin(v)]$ has minimum in-degree at least $11$, so $\din(v)\ge23$.
+\end{enumerate}
+(F2) and (F3) follow from (F1) alone by~\eqref{eq:level}. In Sections~\ref{sec:51}--\ref{sec:drt} we use only (F1); this is why
+Theorem~\ref{thm:f4} is stated for tournaments in which every triple has at least five dominators. A pair $P$ is \emph{tight} if
+$\abs{\D(P)}=11$; then $T[\D(P)]$ is $5$-regular (Lemma~\ref{lem:level}). We use repeatedly that, for $a\in\Nin(v)$,
+$\D(\{a,v\})=\Nin(v)\cap\Nin(a)$, so \emph{the in-degree of $a$ in $T[\Nin(v)]$ equals $\abs{\D(\{a,v\})}$}.
+
+\begin{lemma}\label{lem:T}
+If $P$ is a tight pair, every $r\in\D(P)$ has $\din(r)\ge25$.
+\end{lemma}
+
+\begin{proof}
+Let $R=\D(P)$ and fix $r\in R$. The $\binom{10}2=45$ triples $U\subseteq R$ containing $r$ have, by (F1), at least $225$ incidences
+$(U,w)$ with $w\in\D(U)$. Each such $w$ beats $r$ and is not in $P$. Of the $5$ in-neighbours of $r$ in $R$, each dominates only
+triples inside its $5$-element out-neighbourhood in $R$, which contains $r$: at most $\binom42=6$. Each of the $\din(r)-5$ other
+in-neighbours is beaten by at least $5$ vertices of $R$ by (F2), so beats at most $6$ vertices of $R$, one of which is $r$: at most
+$\binom52=10$ triples. Hence $225\le30+10(\din(r)-5)$, i.e.\ $\din(r)\ge24.5$.
+\end{proof}
+
+\begin{lemma}\label{lem:23}
+If some vertex has in-degree $23$, then $N\ge51$.
+\end{lemma}
+
+\begin{proof}
+Let $\din(v)=23$, $A=\Nin(v)$, $B=\Nout(v)$, $\abs B=N-24$. The in-degrees in $T[A]$ are at least $11$ by (F2) and sum to
+$\binom{23}2=23\cdot11$, so $T[A]$ is $11$-regular and every pair $\{a,v\}$, $a\in A$, is tight. Every $a'\in A$ beats some $a\in A$
+and then lies in $A\cap\Nin(a)=\D(\{a,v\})$, so $\din(a')\ge25$ by Lemma~\ref{lem:T}. Count arcs from $A$ to $B$: each $b\in B$ is
+beaten by the $\abs{\D(\{v,b\})}\ge11$ vertices of $A\cap\Nin(b)$; each $a\in A$ beats $v$ and $11$ vertices of $A$ and has
+$\dout(a)\le N-26$, so it beats at most $N-38$ vertices of $B$. Thus $11(N-24)\le23(N-38)$, i.e.\ $12N\ge610$.
+\end{proof}
+
+\begin{lemma}\label{lem:Q}
+Let $Z=\{v:\din(v)=24\}$. Every $v\in Z$ has at most two in-neighbours in $Z$, and at least $12$ vertices $a\in\Nin(v)$ such that
+$\{a,v\}$ is tight. Consequently $\abs Z\le5$.
+\end{lemma}
+
+\begin{proof}
+Fix $v\in Z$, let $A=\Nin(v)$ and $Z_v=A\cap Z$. For $x\in A$ write the in-degree of $x$ in $T[A]$ as $11+f_x$ with $f_x\ge0$ (F2).
+These sum to $\binom{24}2=24\cdot11+12$, so $\sum_xf_x=12$. Let $L=\{x\in A: f_x=0\}$, $\ell=\abs L\ge12$; for $a\in L$ the pair
+$\{a,v\}$ is tight.
+
+(a) For $a\in L$, $\D(\{a,v\})=A\cap\Nin(a)$ and by Lemma~\ref{lem:T} no in-neighbour of $a$ in $A$ lies in $Z$; so $a$ beats every
+vertex of $Z_v\setminus\{a\}$, and $\abs{L\cap Z}\le1$.
+
+(b) Let $Q=Z_v\setminus L$, $q=\abs Q$. Every $z\in Q$ is beaten by all of $L$ and by its in-neighbours in $T[Q]$, so
+$11+f_z\ge\ell+d^-_{T[Q]}(z)$. Summing over $Q$ and using $f\ge1$ on the other $24-\ell-q$ vertices of $A\setminus L$,
+$12\ge q(\ell-11)+\binom q2+(24-\ell-q)$, i.e.\ $(q-1)(\ell-12)+\binom q2\le0$. As $\ell\ge12$, this forces $q\le1$, so
+$\abs{Z_v}\le2$. Finally $T[Z]$ has all in-degrees at most $2$, so $\binom{\abs Z}2\le2\abs Z$ and $\abs Z\le5$.
+\end{proof}
+
+\begin{theorem}\label{thm:51}
+If every triple of a tournament $T$ on $N$ vertices has at least five dominators, then $N\ge51$. In particular $f(4)\ge51$.
+\end{theorem}
+
+\begin{proof}
+By (F3) and Lemma~\ref{lem:23}, if $N\le50$ every in-degree is at least $24$. Then $\binom N2\ge24N$, so $N\ge49$, and
+$\sum_v(\din(v)-24)=N(N-49)/2$ is $0$ for $N=49$ and $25$ for $N=50$. Every vertex outside $Z$ contributes at least $1$, so
+$\abs Z\ge49$ or $\abs Z\ge25$, contradicting Lemma~\ref{lem:Q}.
+\end{proof}
+
+\section{Tight pairs on 51 vertices}\label{sec:J3}
+
+From now on $T$ is a tournament on $51$ vertices in which every triple has at least five dominators. Let $P=\{a,b\}$ be a tight pair,
+$R=\D(P)$ ($\abs R=11$, $T[R]$ $5$-regular) and $O=V\setminus(P\cup R)$, $\abs O=38$. For $r\in R$ write $\din(r)=25+j_r$; by
+Lemma~\ref{lem:T}, $j_r\ge0$. Put $J(P)=\sum_{r\in R}j_r$. For $y\in O$ let $Q_y=R\cap\Nin(y)=\D(P\cup\{y\})$ and $q_y=\abs{Q_y}\ge5$.
+Since $R$ beats $a$ and $b$, for $U\subseteq R$
+\begin{equation}\label{eq:DU}
+  \D(U)=\{w\in R\setminus U: U\subseteq\Nout(w)\}\ \cup\ \{y\in O: U\cap Q_y=\emptyset\}.
+\end{equation}
+For $u\ne v$ in $R$ let $c(u,v)=\abs{\Nin(u)\cap\Nin(v)\cap R}$.
+\begin{enumerate}[label=(I\arabic*)]
+\item $r\in R$ beats $a$, $b$ and $5$ vertices of $R$, and $\dout(r)=25-j_r$; so $\#\{y\in O:r\notin Q_y\}=20+j_r$.
+\item $\sum_{y\in O}q_y=\sum_r(18-j_r)=198-J$, so $\sum_{y\in O}(q_y-5)=8-J$.
+\item $\sum_{v\ne u}c(u,v)=5\cdot4=20$ for each $u\in R$, and $c(u,v)\le4$.
+\end{enumerate}
+
+\begin{theorem}\label{thm:J3}
+Every tight pair $P$ has $J(P)\ge3$.
+\end{theorem}
+
+\begin{proof}
+\emph{The inequality $(\ast)$.} For $r\in R$, the $45$ triples of $R$ through $r$ have at least $225$ dominator incidences. By
+\eqref{eq:DU} the in-neighbours of $r$ in $R$ contribute $30$, and $y\in O$ with $r\notin Q_y$ contributes $\binom{10-q_y}2$. With
+(I1) and $\lambda(q)=10-\binom{10-q}2$,
+\[
+  (\ast)\qquad \sum_{y\in O,\ r\notin Q_y}\lambda(q_y)\le5+10j_r,
+\]
+where $\lambda(5)=0$, $\lambda(6)=4$, $\lambda(7)=7$, $\lambda(8)=9$ and $\lambda(q)=10$ for $q\ge9$.
+
+\emph{Structure when $J\le2$.} Suppose $J\le2$. If $q_y=7$, each of the $4$ vertices $r\notin Q_y$ has $7\le5+10j_r$, so $J\ge4$; if
+$q_y=8$, similarly $J\ge3$. So no $q_y$ is $7$ or $8$. Each $w\in R$ dominates $\binom53=10$ triples of $R$ and $y\in O$ dominates
+$\binom{11-q_y}3$, so with $m_9=\#\{y:q_y\ge9\}$ and $n_6=\#\{y:q_y=6\}$ the count of triples of $R$ gives
+$110+20(38-m_9-n_6)+10n_6\ge825$, i.e.\ $20m_9+10n_6\le45$. By (I2), $n_6+\sum_{q_y\ge9}(q_y-5)=8-J\ge6$. If $m_9=0$ then
+$n_6\ge6$, impossible. If $m_9\ge2$ then $m_9=2$, $n_6=0$, $J=0$ and both have $q_y=9$; a vertex $r$ missing one of them gets
+$10\le5$ in $(\ast)$, impossible. So $m_9=1$ and $n_6\le2$: there is exactly one $y^*\in O$ with $q_{y^*}\ge9$, at most two $y$ with
+$q_y=6$, and all other $q_y=5$. Call $y$ a $5$-vertex or $6$-vertex accordingly.
+
+\emph{The rounding lemma.} For $u\in R$ let $\alpha_u$ ($\beta_u$) be the number of $5$-vertices ($6$-vertices) $y$ with $u\notin Q_y$,
+and $\gamma_u=1$ if $u\notin Q_{y^*}$, else $0$. By (I1), $\alpha_u+\beta_u+\gamma_u=20+j_u$. For $u\ne v$ in $R$ let $k(u,v)$
+($m(u,v)$) be the number of $5$-vertices ($6$-vertices) $y$ with $u,v\notin Q_y$, and
+$s(u,v)=\sum_{w\in R\setminus\{u,v\}}(\abs{\D(\{u,v,w\})}-5)\ge0$. Then:
+\begin{itemize}
+\item[(R1)] $s(u,v)=3c(u,v)+4k(u,v)+3m(u,v)-45$. Indeed, by~\eqref{eq:DU}, each of the $c(u,v)$ vertices $w'\in R$ beating $u$ and
+$v$ dominates $\{u,v,w\}$ for exactly the $3$ vertices $w\in(\Nout(w')\cap R)\setminus\{u,v\}$; a $5$-vertex (resp.\ $6$-vertex) $y$
+with $u,v\notin Q_y$ dominates it for $4$ (resp.\ $3$) choices of $w$; and $y^*$ misses at most two vertices of $R$, so it dominates
+no triple of $R$ through $u,v$.
+\item[(R2)] $\sum_{v\ne u}s(u,v)=10+20j_u-8\beta_u-20\gamma_u$, by summing (R1) and using (I3), $\sum_vk(u,v)=5\alpha_u$,
+$\sum_vm(u,v)=4\beta_u$.
+\item[(R3)] $s(u,v)\equiv3-c(u,v)-m(u,v)\pmod4$. As $s\ge0$ and $0\le c+m\le6$, $s(u,v)\ge3-c-m$, and $s(u,v)\ge7-c-m$ when
+$c+m\ge4$.
+\end{itemize}
+Summing (R3) over $v$ and comparing with (R2) gives, with $N_4(u)=\#\{v\ne u: c(u,v)+m(u,v)\ge4\}$,
+\[
+  \beta_u+5\gamma_u+N_4(u)\le5j_u\qquad(u\in R).
+\]
+
+\emph{Conclusion.} Let $V_0=\{u\in R:j_u=0\}$, so $\abs{V_0}\ge9$. For $u\in V_0$ the rounding lemma gives
+$\beta_u=\gamma_u=N_4(u)=0$. A $6$-vertex $y$ would have $5$ vertices outside $Q_y$, none in $V_0$, but $\abs{R\setminus V_0}\le2$;
+so there is no $6$-vertex, and (I2) gives $q_{y^*}=13-J\le11$, hence $J=2$ and $Q_{y^*}=R$. For $u\in V_0$, (R2) gives
+$\sum_vs(u,v)=10$ while (R3) and (I3) give $\sum_vs(u,v)\ge\sum_v(3-c(u,v))=10$; so $s(u,v)=3-c(u,v)$, hence $k(u,v)=12-c(u,v)$
+by (R1), and $\abs{\D(\{u,v\})}=c(u,v)+k(u,v)=12$ for every $v\ne u$. For every $s\in R$,
+\[
+  \sum_{v\ne s}\abs{\D(\{s,v\})}=\sum_vc(s,v)+\sum_vk(s,v)=20+5(20+j_s)=120+5j_s .
+\]
+If one vertex $s$ has $j_s=2$, the other $10$ are in $V_0$, so the sum is $120\ne130$. If $j_{s_1}=j_{s_2}=1$, the sum at $s_1$ gives
+$\abs{\D(\{s_1,s_2\})}=125-9\cdot12=17$, so $s(s_1,s_2)=3c+4(17-c)-45=23-c\ge19$. But $s(s_1,s_2)$ is part of the total excess of
+the triples through $s_1$, which is $\frac12\sum_vs(s_1,v)=\frac12(10+20)=15$. Contradiction.
+\end{proof}
+
+\begin{corollary}\label{cor:DRT}
+$T$ is a doubly regular tournament: every vertex has in-degree $25$ and every pair has exactly $12$ dominators.
+\end{corollary}
+
+\begin{proof}
+Write $e(x)=\din(x)-25$; the average of $e$ is $0$.
+
+\emph{No in-degree $23$.} If $\din(v)=23$, as in Lemma~\ref{lem:23} every $\{a,v\}$ with $a\in A=\Nin(v)$ is tight and $e\ge0$ on
+$A$. Each $b\in\Nout(v)$ ($27$ vertices) is beaten by at least $11$ vertices of $A$, and $a\in A$ beats exactly $13-e(a)$ vertices of
+$\Nout(v)$, so $297\le299-\sum_Ae$. Then $J(\{a,v\})\le\sum_Ae\le2$, contradicting Theorem~\ref{thm:J3}. With (F3), every in-degree
+is at least $24$.
+
+\emph{No in-degree $24$.} Let $Z=\{v:\din(v)=24\}$ and suppose $v\in Z$. Let $A=\Nin(v)$, $\abs A=24$, and for each of the $50$
+vertices $z\ne v$ let $D_z=\D(\{v,z\})\subseteq A$ and $h_z=\abs{D_z}-11\ge0$. Let $G$ be the Gram matrix of the indicator vectors of
+the $D_z$ in $\mathbb R^A$: $G_{zz}=11+h_z$ and $G_{zz'}=\abs{\D(\{v,z,z'\})}\ge5$. Write $G=5\mathbf 1\mathbf 1^{\mathsf T}+M$. Since
+$G$ is positive semidefinite of rank at most $24$ and $M\preceq G$, $M$ has at least $26$ non-positive eigenvalues. Next,
+$\sum_zh_z=626-\sum_{x\in A}\din(x)\le28-W$ with $W=\sum_{x\in A}\max(e(x),0)$, using $\din\ge24$ and $\abs{A\cap Z}\le2$
+(Lemma~\ref{lem:Q}); so at most $28-W$ indices $z$ have $h_z\ge1$. If $h_z=0$, the pair $\{v,z\}$ is tight with dominator set $D_z$,
+and the off-diagonal entries of row $z$ of $M$ are nonnegative and sum to $8-J(\{v,z\})\le5<6=M_{zz}$ by (I2) and
+Theorem~\ref{thm:J3}. So the principal submatrix of $M$ on the tight indices is strictly diagonally dominant, hence positive
+definite, and by interlacing $M$ has at least as many positive eigenvalues as there are tight indices. Thus at least $26$ indices are
+not tight, so $W\le2$. By Lemma~\ref{lem:Q} some $\{a,v\}$, $a\in A$, is tight; its dominator set lies in $A$, so
+$J(\{a,v\})\le W\le2$, contradicting Theorem~\ref{thm:J3}.
+
+\emph{Conclusion.} So $T$ is regular. A tight pair would have $J=0$, so every pair has at least $12$ dominators; since
+$\sum_P\abs{\D(P)}=\sum_w\binom{\dout(w)}2=51\binom{25}2=12\binom{51}2$, every pair has exactly $12$.
+\end{proof}
+
+\section{\texorpdfstring{No doubly regular tournament on $51$ vertices has $S_4$}{No doubly regular tournament on 51 vertices has S4}}\label{sec:drt}
+
+Let $T$ be doubly regular on $51$ vertices: all in- and out-degrees are $25$ and every pair has $12$ common dominators, hence also
+$12$ common out-neighbours. For a triple $Y$ let $k(Y)=\abs{\D(Y)}$, $\Dp(Y)=\{w\notin Y: y\to w\ \forall y\in Y\}$, and
+$\sigma(Y)=1$ if $T[Y]$ is transitive, $0$ if it is a $3$-cycle.
+
+\begin{lemma}\label{lem:M}
+\begin{enumerate}[label=(M\arabic*),start=0]
+\item There are $51\binom{25}2=15300$ transitive and $20825-15300=5525$ cyclic triples.
+\item $\abs{\D(Y)}+\abs{\Dp(Y)}=12-\sigma(Y)$ for every triple $Y$.
+\item $\sum_{Y\text{ trans.}}k(Y)=84150$ and $\sum_{Y\text{ cyc.}}k(Y)=33150$; the means are $11/2$ and $6$.
+\item $\sum_Y\binom{k(Y)}2=\binom{51}2\binom{12}3=280500$.
+\item $\sum_Y\binom{k(Y)}3=\sum_Y\binom{12-\sigma(Y)-k(Y)}3$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(M0): each transitive triple has exactly one vertex beating the other two. (M1): by inclusion--exclusion over the $48$ vertices
+outside $Y=\{y_1,y_2,y_3\}$, $\abs{\Dp(Y)}=48-\sum_i\abs{\Nin(y_i)\setminus Y}+\sum_{i<j}\abs{\D(\{y_i,y_j\})\setminus Y}-\abs{\D(Y)}$;
+the first sum is $75-3=72$ and the second is $36-\sigma(Y)$, since a dominator of $\{y_i,y_j\}$ lies in $Y$ iff the third vertex beats
+both. (M2): for each $w$, $T[\Nout(w)]$ is $12$-regular on $25$ vertices, so it has $25\binom{12}2=1650$ transitive and $650$ cyclic
+triples; multiply by $51$. (M3): pairs $\{w,w'\}\subseteq\D(Y)$ correspond to $Y\subseteq\Nout(w)\cap\Nout(w')$, a $12$-set. (M4): both
+sides count pairs of triples $(Y,W)$ such that every vertex of $W$ beats every vertex of $Y$; for fixed $W$, $Y\subseteq\Dp(W)$, whose
+size is given by (M1).
+\end{proof}
+
+\begin{theorem}\label{thm:drt}
+Every doubly regular tournament on $51$ vertices has a triple with at most $4$ dominators.
+\end{theorem}
+
+\begin{proof}
+Suppose $k(Y)\ge5$ for all $Y$. Put $u(Y)=k(Y)-11/2$ on transitive and $u(Y)=k(Y)-6$ on cyclic triples; by (M2), $\sum u=0$ on each
+class. With $L=12-\sigma$, $a=L/2-1$ and $f(x)=x^3-x$, we have $6\binom k3=f(u+a)$ and $6\binom{L-k}3=-f(u-a)$, so
+\[
+  \binom k3-\binom{L-k}3=\tfrac13\bigl(u^3+(3a^2-1)u\bigr).
+\]
+Hence (M4) becomes $\sum_{\text{trans.}}u^3+\sum_{\text{cyc.}}u^3=0$, and therefore
+$\sum_{\text{trans.}}(u^3-u/4)+\sum_{\text{cyc.}}(u^3-u)=0$. On transitive triples $u\in\{-\frac12,\frac12,\frac32,\dots\}$ and
+$u^3-u/4=(u-\frac12)u(u+\frac12)\ge0$ with equality iff $u=\pm\frac12$; on cyclic triples $u\in\{-1,0,1,\dots\}$ and
+$u^3-u=(u-1)u(u+1)\ge0$ with equality iff $u\in\{-1,0,1\}$. So every term vanishes: transitive triples have $k\in\{5,6\}$, cyclic
+triples have $k\in\{5,6,7\}$. By (M2), $7650$ transitive triples have $k=5$ and $7650$ have $k=6$, and $p$ cyclic triples have $k=5$,
+$p$ have $k=7$ and $5525-2p$ have $k=6$. Then $\sum_Y\binom{k(Y)}2=7650\cdot25+10p+15(5525-2p)+21p=274125+p$, so by (M3) $p=6375$,
+which exceeds $5525/2$. Contradiction.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:f4}]
+Let every triple of $T$ have at least five dominators. By Theorem~\ref{thm:51}, $N\ge51$; if $N=51$, $T$ is doubly regular by
+Corollary~\ref{cor:DRT}, contradicting Theorem~\ref{thm:drt}. So $N\ge52$. An $S_4$ tournament satisfies the hypothesis by
+Lemma~\ref{lem:szekeres}.
+\end{proof}
+
+\begin{remark}
+In a doubly regular tournament on $4t+3$ vertices the transitive and cyclic means of $k$ are $(t-1)/2$ and $t/2$. For $t=12$ the
+bound $k\ge5$ lies only $1/2$ below the transitive mean, which is what makes the third-moment identity decisive. For $\QR_{67}$
+($t=16$) the bound is far below the means, consistent with $\QR_{67}$ having $S_4$.
+\end{remark}
+
+\section{\texorpdfstring{Towards $f(4)\ge53$}{Towards f(4) >= 53}}\label{sec:52}
+
+Let $T$ have $S_4$ on $52$ vertices and write $e(v)=\din(v)-25$, so $\sum_ve(v)=\binom{52}2-52\cdot25=26$.
+
+\begin{lemma}\label{lem:caseA}
+If $T$ has no tight pair, then every in-degree is at least $25$.
+\end{lemma}
+
+\begin{proof}
+By (F3), in-degrees are at least $23$. A vertex of in-degree $23$ lies in $23$ tight pairs (proof of Lemma~\ref{lem:23}), and a vertex
+of in-degree $24$ lies in at least $12$ tight pairs (Lemma~\ref{lem:Q}).
+\end{proof}
+
+So if $T$ has no tight pair, then $0\le e(v)$ for all $v$, every pair has at least $12$ dominators, and the maximum in-degree is
+$25+m$ with $m\ge1$ since $\sum e=26$; $m=1$ means that $26$ vertices have in-degree $25$ and $26$ have in-degree $26$.
+
+\subsection{\texorpdfstring{Finite-$N$ flag relaxation}{Finite-N flag relaxation}}
+We use a finite-$N$ version of Razborov's flag algebra method~\cite{Raz07}; finite-$N$ and exact-certificate variants of this
+method are used, for example, in~\cite{LP21}. Fix $s=7$, let $\mathcal T_7$ be the $456$ isomorphism classes of $7$-vertex
+tournaments and $x_H=p_H/\binom N7$, where $p_H$ is the number of $7$-subsets of $V$ inducing $H$. For a labelled root
+$\theta:[r]\to V$ of a given type and a vertex $a$ outside the root, the \emph{pattern} of $a$ is $\{i:a\to\theta_i\}$; let $c_b(\theta)$
+be the number of vertices with pattern $b$. Dominator counts of subsets of the root are linear in the $c_b(\theta)$.
+
+\begin{lemma}\label{lem:flag}
+(1) For patterns $b_1,\dots,b_d$ with $r+d\le7$, $\sum_\theta\prod_ic_{b_i}(\theta)$, summed over all roots of a fixed type, is an
+explicit linear form in $(x_H)$ whose coefficients depend on $N$ and count configurations inside $H$, including coincidences among the
+$a_i$; the same holds with two pair-flag counts when $r+d+4\le7$.
+(2) If $g_1,\dots,g_t$ are polynomials in the $c_b(\theta)$ that are nonnegative at every root (for example $\abs{\D(\theta_S)}-\tau$
+when every $\abs S$-set has at least $\tau$ dominators, upper degree bounds, or products $(D-j)(D-j-1)$ of consecutive integers),
+then $\sum_\theta\prod g_i\ge0$ and $\sum_\theta\prod g_i\,c(\theta)c(\theta)^{\mathsf T}\succeq0$ for every vector $c(\theta)$ of
+monomials, whenever the total degree is at most $7-r$.
+\end{lemma}
+
+\begin{proof}
+(1) $\prod_ic_{b_i}(\theta)$ counts tuples $(\theta,a_1,\dots,a_d)$; whether a tuple counts depends only on the subtournament induced
+on its union $W$, of size $t\le r+d$. Each such tuple lies in $\binom{N-t}{7-t}$ seven-sets $U\supseteq W$, and each $U$ inducing $H$
+contains $m_t(H)$ tuples with union of size $t$; hence the sum equals
+$\sum_t\binom{N-t}{7-t}^{-1}\sum_Hp_Hm_t(H)$. (2) Each summand is nonnegative, resp.\ positive semidefinite.
+\end{proof}
+
+A \emph{certificate} is a finite family of such constraints with nonnegative rational weights whose weighted sum is a linear form
+$\sum_Ha_Hx_H$ with $\sum_Ha_Hx_H\ge0$ for every admissible $T$, and with $a_H<0$ for every $H\in\mathcal T_7$. Since $x\ge0$ and
+$\sum_Hx_H=1$, a certificate shows that no admissible $T$ exists. The positive semidefinite constraints enter as rank-one terms
+$u u^{\mathsf T}$ with integer vectors $u$.
+
+\begin{proposition}[computer-assisted]\label{prop:cert}
+There are certificates, verified in exact rational arithmetic, for the non-existence of a tournament on $52$ vertices with each of
+the following sets of hypotheses:
+\begin{enumerate}[label=(\alph*)]
+\item every in-degree is $25$ or $26$, every pair has at least $12$ and every triple at least $5$ dominators ($429$ multipliers);
+\item every in-degree lies in $[25,25+m]$, some vertex has in-degree $25+m$, every pair has at least $12$, every triple at least $5$,
+and every $4$-set at least $1$ dominator, for $m=2$ ($423$ multipliers), $m=3$ ($410$) and $m=4$ ($420$).
+\end{enumerate}
+\end{proposition}
+
+The hypothesis ``some vertex has in-degree $25+m$'' is used through the valid inequality
+$\sum_v(e(v))_m\ge m!$, where $(x)_m$ is the falling factorial; it is valid because $e\ge0$ makes every term nonnegative. The
+largest coefficient $\max_Ha_H$, normalised by the certificate's scaling, is $-5.4\cdot10^{-5}$ in (a) and $-1.2\cdot10^{-5}$,
+$-5.7\cdot10^{-6}$, $-2.1\cdot10^{-6}$ for $m=2,3,4$. Each certificate was checked by a verifier written independently of the code
+that produced it, which re-derives the $456$ classes and the coefficients $m_t(H)$ from scratch and evaluates the weighted sum
+over $\mathbb Q$.
+
+\begin{proof}[Proof of Theorem~\ref{thm:52}]
+The second statement is Proposition~\ref{prop:cert}(a). For the first, let $T$ have $S_4$ on $52$ vertices and no tight pair. By
+Lemma~\ref{lem:caseA} and the discussion after it, every in-degree lies in $[25,25+m]$ where $25+m$ is the maximum in-degree, and
+$m\ge1$. If $m=1$, Proposition~\ref{prop:cert}(a) applies; if $m\in\{2,3,4\}$, part (b) applies. Hence $m\ge5$.
+\end{proof}
+
+\begin{remark}\label{rem:twin}
+Without the triple hypothesis, (a) is false: adding to a doubly regular tournament on $51$ vertices a twin of one of its vertices
+gives a tournament on $52$ vertices with in-degrees $25$ and $26$ in which every pair has at least $12$ dominators (checked by
+computer). The same relaxation at level $6$ does not exclude (a). For $m=5,6$ our level-$7$ computations did not produce
+certificates that survive exact verification, and for larger $m$ the level-$7$ relaxation is feasible; these cases, and the case
+of a tight pair, need new ideas.
+\end{remark}
+
+\section{What the argument does not use, and why the order is hard}\label{sec:limits}
+
+The asymptotic argument uses the tournament structure in two places: Lemma~\ref{lem:szekeres}, and the doubling of
+Lemma~\ref{lem:level}, which counts arcs inside $\D(A)$. Theorem~\ref{thm:bip} shows that the second can be replaced by the
+game-value inequality, which uses only arcs between two sides. The following proposition indicates that the covering property alone,
+without antisymmetry, carries no factor $n$.
+
+\begin{proposition}\label{prop:cover}
+Let $c(t)$ be the least number of subsets, each of size at most $v/2$, of some $v$-set that together cover every $t$-subset. Then
+$c(t)=2^{t+1}-2$.
+\end{proposition}
+
+\begin{proof}
+Let $c'(t)$ be the same minimum with all subsets of size strictly less than $v/2$. Fix a point $p$. The blocks through $p$, with $p$
+removed, cover all $(t-1)$-subsets of the other $v-1$ points and have size less than $(v-1)/2$; so every point lies in at least
+$c'(t-1)$ blocks. The average point lies in at most half of the blocks (in fewer than half, for $c'$). Hence $c(t)\ge2c'(t-1)$ and
+$c'(t)\ge2c'(t-1)+1$; with $c'(1)\ge3$ this gives $c'(t)\ge2^{t+1}-1$ and $c(t)\ge2^{t+1}-2$. Conversely, the $2^{t+1}-2$ affine
+hyperplanes of $\mathbb F_2^t$ have $2^{t-1}$ points each, and any $t$ points lie in an affine subspace of dimension at most $t-1$,
+hence in an affine hyperplane.
+\end{proof}
+
+In an $S_n$ tournament the out-neighbourhoods cover all $n$-sets and have average size $(N-1)/2$. Proposition~\ref{prop:cover} shows
+that a covering of this kind needs only $2^{n+1}-2$ blocks, so any argument that uses only this covering property cannot give the
+factor $n$ of~\eqref{eq:SS} or Theorem~\ref{thm:C}. The extremal covering cannot be realised by a tournament, by the following
+rank bound.
+
+\begin{lemma}\label{lem:rank}
+Let $T$ be a tournament on $N$ vertices and $\pi:V\to\mathbb F_2^d$ a map such that every in-neighbourhood is the trace of an affine
+hyperplane, $\Nin(y)=\{x\ne y:\ \alpha_y\cdot\pi(x)=c_y\}$ with $\alpha_y\in\mathbb F_2^d$, $c_y\in\mathbb F_2$. Then $d\ge(N-3)/2$.
+\end{lemma}
+
+\begin{proof}
+Let $A_{xy}=1$ if $x\to y$ and $0$ otherwise, over $\mathbb F_2$. Then $A+A^{\mathsf T}=J+I$, which has rank at least $N-1$. Off the
+diagonal $A$ agrees with $L_{xy}=\pi(x)\cdot\alpha_y+c_y+1$, a matrix of rank at most $d+1$; on the diagonal $A$ is $0$. Hence
+$L+L^{\mathsf T}=A+A^{\mathsf T}$ over $\mathbb F_2$ (the diagonal terms cancel), so $2(d+1)\ge N-1$.
+\end{proof}
+
+In the hyperplane covering of Proposition~\ref{prop:cover} the dimension is $t=\log_2 v$.
+
+The base level of the chain can be tight: adding three suitable vertices to $\QR_{67}$ gives an $S_4$ tournament on $70$ vertices
+with a triple that has exactly $5=n+1$ dominators (verified by computer; the tournament is in the repository listed in Section~\ref{sec:data}). So a proof that
+$f(n)/(n2^n)\to\infty$ cannot rest on the last level alone; it needs information about several levels at once.
+
+\section{Open problems}\label{sec:open}
+
+\begin{enumerate}
+\item Determine the order of magnitude of $f(n)$. The bounds are now
+$(\cs-o(1))\,n2^n\le f(n)\le(\ln2+o(1))\,n^22^n$. Is $f(n)/(n2^n)\to\infty$?
+\item The same question for $\fb(n)$, which by Theorem~\ref{thm:bip} satisfies $2(\cs-o(1))n2^n\le\fb(n)\le2f(n)$. Since $\fb$
+involves no arcs within a side, it is a question about families of sets: a proof that $\fb(n)/(n2^n)\to\infty$ would be a
+statement about $n$-wise intersecting families with large cover number.
+\item Is $f(4)\ge53$? By Theorem~\ref{thm:52} an $S_4$ tournament on $52$ vertices has a tight pair or a vertex of in-degree at
+least $30$. The best upper bound is $f(4)\le67$, from $\QR_{67}$.
+\item What is the least order $g(5)$ of a tournament in which every triple has at least five dominators? We know
+$52\le g(5)\le59$.
+\end{enumerate}
+
+\section{Data and code}\label{sec:data}
+
+All scripts, certificates and data used in this paper are in the public repository
+\begin{center}
+\url{https://github.com/Vittal-Mukunda/Stochastic-Optimization-Tutorial}
+\end{center}
+at the tag \texttt{schutte-paper-v1}. Paths below are relative to the repository root; the \texttt{README.md} there explains how to
+run each check (Python~3 with \texttt{numpy} and \texttt{scipy}).
+\begin{itemize}\sloppy
+\item \texttt{proof/verify\_proof.py} (output in \texttt{proof/verify\_proof.out}): an independent check of every numerical step of
+Sections~\ref{sec:B}--\ref{sec:51} (the inequalities of Theorem~\ref{thm:B} for $5\le n\le2000$, the value of $\cs$ to $40$ digits,
+the integral comparison of Lemma~\ref{lem:chain} on $27760$ triples, the recursion of Table~\ref{tab:D}, and brute-force checks of
+Lemmas~\ref{lem:szekeres}--\ref{lem:cross} on $\QR_7$, $\QR_{19}$, $\QR_{67}$ and the $70$-vertex tournament of
+Section~\ref{sec:limits}).
+\item \texttt{proof/thin\_S4\_N70.txt}: the $70$-vertex $S_4$ tournament of Section~\ref{sec:limits}.
+\item \texttt{proof/search/r16/bip\_gamevalue.py}: a check of Lemma~\ref{lem:game} on the example of Remark~\ref{rem:fb2} and other
+bipartite tournaments.
+\item \texttt{proof/search/r10/cert\_s7\_N52\_balF1.pkl}, \texttt{\_e2.pkl}, \texttt{\_e3.pkl}, \texttt{\_e4.pkl}: the four
+certificates of Proposition~\ref{prop:cert} ((a), and (b) for $m=2,3,4$); \texttt{cert\_s7\_N52\_balA.pkl} is a fifth certificate
+for hypothesis (a) together with the $4$-set condition; \texttt{classes\_7.npz} lists the $456$ isomorphism classes of $7$-vertex
+tournaments.
+\item \texttt{proof/search/r11/audit\_b320\_independent.py}: the independent exact verifier for these certificates.
+\item \texttt{proof/search/r10/drt\_twin.py} with \texttt{proof/search/r6/drt51.json}: the check of Remark~\ref{rem:twin}.
+\end{itemize}
+
+\begin{thebibliography}{99}
+
+\bibitem{BGHT03}
+M.~Borowiecki, J.~Grytczuk, M.~Ha\l uszczak and Zs.~Tuza,
+\newblock Sch\"utte's tournament problem and intersecting families of sets,
+\newblock \emph{Combin. Probab. Comput.} \textbf{12} (2003), 359--364.
+
+\bibitem{Erdos63}
+P.~Erd\H{o}s,
+\newblock On a problem in graph theory,
+\newblock \emph{Math. Gaz.} \textbf{47} (1963), 220--223.
+
+\bibitem{EP902}
+T.~F.~Bloom,
+\newblock Erd\H{o}s Problem \#902,
+\newblock \url{https://www.erdosproblems.com/902}.
+
+\bibitem{GS71}
+R.~L.~Graham and J.~H.~Spencer,
+\newblock A constructive solution to a tournament problem,
+\newblock \emph{Canad. Math. Bull.} \textbf{14} (1971), 45--48.
+
+\bibitem{Jef26}
+J.~Jeffries,
+\newblock Sch\"utte's property for sets of tournaments and an application to dice games,
+\newblock arXiv:2604.08790 (2026).
+
+\bibitem{LP21}
+B.~Lidick\'y and F.~Pfender,
+\newblock Semidefinite programming and Ramsey numbers,
+\newblock \emph{SIAM J. Discrete Math.} \textbf{35} (2021), 2328--2344.
+
+\bibitem{Raz07}
+A.~A.~Razborov,
+\newblock Flag algebras,
+\newblock \emph{J. Symbolic Logic} \textbf{72} (2007), 1239--1282.
+
+\bibitem{RMHH04}
+K.~B.~Reid, A.~A.~McRae, S.~M.~Hedetniemi and S.~T.~Hedetniemi,
+\newblock Domination and irredundance in tournaments,
+\newblock \emph{Australas. J. Combin.} \textbf{29} (2004), 157--172.
+
+\bibitem{SS65}
+E.~Szekeres and G.~Szekeres,
+\newblock On a problem of Sch\"utte and Erd\H{o}s,
+\newblock \emph{Math. Gaz.} \textbf{49} (1965), 290--293.
+
+\bibitem{Tys00}
+J.~Tyszkiewicz,
+\newblock A simple construction for tournaments with every $k$ players beaten by a single player,
+\newblock \emph{Amer. Math. Monthly} \textbf{107} (2000), 53.
+
+\end{thebibliography}
+
+\end{document}
